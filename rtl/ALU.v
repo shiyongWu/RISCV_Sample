@@ -11,24 +11,42 @@ module ALU
 )(
    input  [XLEN-1:0] src1,
    input  [XLEN-1:0] src2,
-   input
-   output [XLEN-1:0] Result_o,
-   output            overflow_o
+   input  [1:0]      RI_COM_sel_i, // 
+   input  [2:0]      B_COM_sel_i, // 
+   input  [1:0]      SF_sel_i,
+   input             ADD_B_sel_i,
+   input  [1:0]      ADD_OP_sel_i,
+   input  [1:0]      ALU_Result_sel_i,
+   output            B_COM_o,  // for B_type instructions
+   output [XLEN-1:0] Result_o
 );
-  
+   //adder
    wire [XLEN-1:0] A_wire;
    wire [XLEN-1:0] B_wire;
    wire [XLEN-1:0] C_wire;
    wire [XLEN-1:0] Sum_wire; 
    wire [XLEN-1:0] CA_wire;
-   
+   // shift
+   wire [XLEN-1:0] SF_Result_wire;
+   //compare 
+   wire            RI_COM_result_wire;
    //input
    assign A_wire = src1;
-   assign B_wire = src2;
-   // C_wire is 32'd0 ,then Sum_wire = A ^ B
-   // 
-   assign C_wire = () 32'b0 : {CA_wire[30:0],1'b0};
-   
+   assign B_wire = (ADD_B_sel_i == 1'd1) ? (~src2) : (src2);
+   //ADD_OP_SEL
+   //2'd0   , ADD OR SUB
+   //2'd1   , XOR , C_wire = 32'd0 , result = sum_wire = A ^ B
+   //2'd2   , OR  , C_wire = {32{1'b1}}, result = CA_wire
+   //2'd3   , AND , C_wire = 32'd0 , result = CA_wire
+   assign C_wire = (ADD_OP_sel_i == 2'd1) ? 32'd0 :
+                   (ADD_OP_sel_i == 2'd2) ? ({32{1'b1}}) :
+  				   (ADD_OP_sel_i == 2'd3) ? 32'd0 : 
+				   (ADD_B_sel_i  == 1'b1) ? ({CA_wire[30:0],1'b1}):({CA_wire[30:0],1'b0});
+   // sf_sel_i == 2'd1 , left shift
+   // sf_sel_i == 2'd2 , logic right shift
+   assign SF_Result_wire = (SF_sel_i == 2'd1) ?  (src1 << src2[4:0] ):
+                           (SF_sel_i == 2'd2) ?  (src1 >> src2[4:0] ):
+						   (SF_sel_i == 2'd3) ?  ($signed(src1) >>> src2[4:0]) : ({32{1'd1}});
    // 32-bit carry ripple adder
    FA FA0(.A_i(A_wire[0]),.B_i(B_wire[0]),.C_i(C_wire[0]),.S_o(Sum_wire[0]),.CA_o(CA_wire[0]));
    FA FA1(.A_i(A_wire[1]),.B_i(B_wire[1]),.C_i(C_wire[1]),.S_o(Sum_wire[1]),.CA_o(CA_wire[1]));
@@ -63,8 +81,25 @@ module ALU
    FA FA30(.A_i(A_wire[30]),.B_i(B_wire[30]),.C_i(C_wire[30]),.S_o(Sum_wire[30]),.CA_o(CA_wire[30]));
    FA FA31(.A_i(A_wire[31]),.B_i(B_wire[31]),.C_i(C_wire[31]),.S_o(Sum_wire[31]),.CA_o(CA_wire[31]));
    
+ 
+   //COM_sel_i == 2'd1, SLT  , COM_result_wire=  2'd1 , if src2 > src1
+   //COM_sel_i == 2'd2, SLTU , COM_result_wire = 2'd2 , if src2 > src1 (unsigned)
+   assign RI_COM_result_wire = (RI_COM_sel_i == 2'd1) ? (Sum_wire[31]): 
+                               (RI_COM_sel_i == 2'd2) ? (~CA_wire[31]): 1'd0;
    //output 
-   assign Result_o    = Sum_wire;
-   assign overflow_o  = CA_wire[31];
-   
+   // B_COM_sel_i =  3'd0 , beq
+   // B_COM_sel_i =  3'd1 , bne
+   // B_COM_sel_i =  3'd2 , blt
+   // B_COM_sel_i =  3'd3 , bge
+   // B_COM_sel_i =  3'd4 , bltu
+   // B_COM_sel_i =  3'd5 , bgeu
+   assign B_COM_o = (B_COM_sel_i == 3'd0) ? ( ~(|Sum_wire))   :
+                    (B_COM_sel_i == 3'd1) ? (  (|Sum_wire))  :
+                    (B_COM_sel_i == 3'd2) ? ( Sum_wire[31]) :
+                    (B_COM_sel_i == 3'd3) ? (~Sum_wire[31]) :
+					(B_COM_sel_i == 3'd4) ? ( ~CA_wire[31]) :
+					(B_COM_sel_i == 3'd5) ? (  CA_wire[31]) : 1'd0;
+   assign Result_o  = (ALU_Result_sel_i == 2'd1) ? (SF_Result_wire):
+                      (ALU_Result_sel_i == 2'd2) ? ({31'd0,RI_COM_result_wire}):
+					  (ADD_OP_sel_i[1]  == 1'd1) ? CA_wire  : Sum_wire;
 endmodule 

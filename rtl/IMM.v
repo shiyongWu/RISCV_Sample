@@ -7,13 +7,13 @@
 `timescale 1ns/1ps
 module IMM
 #(
-  parameter XLEN = 32
+  parameter XLEN = 32,
   parameter INST = 25
 )
 (
+    output [XLEN-1:0] IMM_V_o,
     input  [INST-1:0] IMM_i,
-	input  [2:0]      IMM_sel_i,
-    output [XLEN-1:0] IMM_V_o
+	input  [2:0]      IMM_sel_i
 );
 
    wire [XLEN-1:0] I_TYPE_IMM_V;
@@ -26,7 +26,7 @@ module IMM
    assign S_TYPE_IMM_V = { {21{IMM_i[24]}},IMM_i[23:18],IMM_i[4:1],IMM_i[0]};
    assign B_TYPE_IMM_V = { {20{IMM_i[24]}},IMM_i[0],IMM_i[23:18],IMM_i[4:1],1'd0};
    assign U_TYPE_IMM_V = { IMM_i[24],IMM_i[23:13],IMM_i[12:5],12'd0};
-   assign J_TYPE_IMM_V = { {12{IMM_i[24]}},IMM_i[12:5],IMM_i[13],IMM_i[23:18],IMM_i[17:14],1'd0};
+   assign J_TYPE_IMM_V = { {12{IMM_i[24]}},IMM_i[12:5],IMM_i[13],IMM_i[23:14],1'd0};
    
    assign IMM_V_o = ( IMM_sel_i == 3'd1) ? I_TYPE_IMM_V :
                     ( IMM_sel_i == 3'd2) ? S_TYPE_IMM_V :
