@@ -12,7 +12,7 @@ module DM(
   reg [31:0] mem_data [0:65535];
 
 
-  assign DM_out = (DM_enable == 1'b0) ? mem_data[DM_address] : 32'd0;
+  assign #1 DM_out = (DM_enable == 1'b0) ? mem_data[DM_address] : 32'd0;
 
   integer i;
   always@(posedge clk)begin
