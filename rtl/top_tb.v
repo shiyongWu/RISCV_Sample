@@ -1,6 +1,7 @@
 `timescale 1ns/1ps
 `define CYCLE 10
 `include "RISCV.v"
+`include "FORWARD.v"
 `include "ALU.v"
 `include "DE.v"
 `include "FA.v"
@@ -23,7 +24,7 @@ module top_tb;
   wire [31:0] IM_out;
   wire [31:0] DM_out;
   reg [31:0] GOLDEN[0:4095];
-  integer gf,i;
+  integer gf,i,tmp;
   integer err;
   always #(`CYCLE/2) clk = ~clk;
 
@@ -71,13 +72,13 @@ module top_tb;
 	gf=$fopen("golden.dat","r");
 	i=0;
 	while(!$feof(gf)) begin
-		$fscanf(gf,"%d\n",GOLDEN[i]);
-		i=i+1;
+	  tmp =$fscanf(gf,"%d\n",GOLDEN[i]);
+	  i=i+1;
 	end
 	$fclose(gf); 
     #(`CYCLE*10000)
     $display( "\nDone\n" );
-    for (int i=0;i<10;i=i+1 ) 
+    for (i=0;i<10;i=i+1 ) 
     begin
       $display( "DM[%2d] = %h",i,DM1.mem_data[i]); 
     end
@@ -97,8 +98,8 @@ module top_tb;
 
   initial
   begin
-    $Dumpfile("top.fsdb");
-    $Dumpvars(0, top_tb);
+    $dumpfile("top.vcd");
+    $dumpvars(0, top_tb);
     #1000000 $finish;
   end
   

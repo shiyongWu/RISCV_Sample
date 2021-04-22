@@ -25,6 +25,7 @@ module SECOND_PIPE
    input             DM_WEN_i,
    input             WB_MUX_sel_i,
    input       [4:0] rd_addr_i,
+   input             branch_i,
    input             clk,
    input             rst_n
 );
@@ -39,13 +40,13 @@ module SECOND_PIPE
    wire            WB_MUX_sel_wire;
    wire      [4:0] rd_addr_wire;
 
-   assign src2_DATA_wire    = src2_data_i;
-   assign EXE_DATA_wire     = EXE_DATA_i;
-   assign REG_WEN_wire      = REG_WEN_i;
-   assign DM_WEN_wire       = DM_WEN_i;
-   assign DM_enable_n_wire  = DM_enable_n_i;
-   assign WB_MUX_sel_wire   = WB_MUX_sel_i;
-   assign rd_addr_wire      = rd_addr_i;
+   assign src2_DATA_wire    = (branch_i == 1'd1) ? ZERO : src2_data_i;
+   assign EXE_DATA_wire     = (branch_i == 1'd1) ? ZERO : EXE_DATA_i;
+   assign REG_WEN_wire      = (branch_i == 1'd1) ? 1'd1 : REG_WEN_i;
+   assign DM_WEN_wire       = (branch_i == 1'd1) ? 1'd1 : DM_WEN_i;
+   assign DM_enable_n_wire  = (branch_i == 1'd1) ? 1'd1 : DM_enable_n_i;
+   assign WB_MUX_sel_wire   = (branch_i == 1'd1) ? 1'd0 : WB_MUX_sel_i;
+   assign rd_addr_wire      = (branch_i == 1'd1) ? 5'd0 : rd_addr_i;
 
 
    

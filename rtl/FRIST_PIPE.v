@@ -53,7 +53,8 @@ module FRIST_PIPE
 	 input      [4:0]rd_addr_i,
 	 input [XLEN-1:0]IMM_V_i,
 	 input [XLEN-1:0]PC_i,
-     input  	     clk,
+         input           branch_i,
+         input  	     clk,
 	 input           rst_n
 );
 
@@ -80,27 +81,27 @@ module FRIST_PIPE
 	 wire [XLEN-1:0]PC_wire;	 
 
 
-     assign RI_COM_sel_wire     = RI_COM_sel_i;
-	 assign B_COM_sel_wire      = B_COM_sel_i;
-	 assign SF_sel_wire         = SF_sel_i;
-	 assign ADD_B_sel_wire      = ADD_B_sel_i;
-	 assign ADD_OP_sel_wire     = ADD_OP_sel_i;
-	 assign ALU_Result_sel_wire = ALU_Result_sel_i;
-	 assign REG_WEN_wire        = REG_WEN_i;
-	 assign DM_enable_n_wire    = DM_enable_n_i;
-	 assign DM_WEN_wire         = DM_WEN_i;
-     assign Branch_en_wire      = Branch_en_i;
-     assign Branch_sel_wire     = Branch_sel_i;
-     assign Jump_en_wire        = Jump_en_i;
-     assign MUX_ALU_A_sel_wire  = MUX_ALU_A_sel_i;
-     assign MUX_ALU_B_sel_wire  = MUX_ALU_B_sel_i;
-     assign WB_MUX_sel_wire     = WB_MUX_sel_i;
-     assign EXE_MUX_sel_wire    = EXE_MUX_sel_i;
-     assign rs1_addr_wire       = rs1_addr_i;
-     assign rs2_addr_wire       = rs2_addr_i;
-     assign rd_addr_wire        = rd_addr_i;
-     assign IMM_V_wire          = IMM_V_i;
-     assign PC_wire             = PC_i;
+     assign RI_COM_sel_wire         = (branch_i==1'd1) ? 2'd0 : RI_COM_sel_i;
+	 assign B_COM_sel_wire      = (branch_i==1'd1) ? 3'd0 : B_COM_sel_i;
+	 assign SF_sel_wire         = (branch_i==1'd1) ? 2'd0 : SF_sel_i;
+	 assign ADD_B_sel_wire      = (branch_i==1'd1) ? 1'd0 : ADD_B_sel_i;
+	 assign ADD_OP_sel_wire     = (branch_i==1'd1) ? 2'd0 : ADD_OP_sel_i;
+	 assign ALU_Result_sel_wire = (branch_i==1'd1) ? 2'd0 : ALU_Result_sel_i;
+	 assign REG_WEN_wire        = (branch_i==1'd1) ? 1'd1 :REG_WEN_i;
+	 assign DM_enable_n_wire    = (branch_i==1'd1) ? 1'd1 :DM_enable_n_i;
+	 assign DM_WEN_wire         = (branch_i==1'd1) ? 1'd1 :DM_WEN_i;
+     assign Branch_en_wire      = (branch_i==1'd1) ? 1'd0 : Branch_en_i;
+     assign Branch_sel_wire     = (branch_i==1'd1) ? 1'd0 : Branch_sel_i;
+     assign Jump_en_wire        = (branch_i==1'd1) ? 1'd0 : Jump_en_i;
+     assign MUX_ALU_A_sel_wire  = (branch_i==1'd1) ? 1'd0 : MUX_ALU_A_sel_i;
+     assign MUX_ALU_B_sel_wire  = (branch_i==1'd1) ? 1'd0 : MUX_ALU_B_sel_i;
+     assign WB_MUX_sel_wire     = (branch_i==1'd1) ? 1'd0 : WB_MUX_sel_i;
+     assign EXE_MUX_sel_wire    = (branch_i==1'd1) ? 2'd0 : EXE_MUX_sel_i;
+     assign rs1_addr_wire       = (branch_i==1'd1) ? 5'd0 : rs1_addr_i;
+     assign rs2_addr_wire       = (branch_i==1'd1) ? 5'd0 : rs2_addr_i;
+     assign rd_addr_wire        = (branch_i==1'd1) ? 5'd0 : rd_addr_i;
+     assign IMM_V_wire          = (branch_i==1'd1) ? ZERO : IMM_V_i;
+     assign PC_wire             = (branch_i==1'd1) ? ZERO : PC_i;
 
 
 

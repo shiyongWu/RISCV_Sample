@@ -67,6 +67,9 @@ module RISCV
    //For RegFile 
    wire [XLEN-1:0] src1_data_wire;
    wire [XLEN-1:0] src2_data_wire;
+   //For FORWARD
+   wire  src1_forward_sel_wire;
+   wire  src2_forward_sel_wire;
    //For ALU wire
    wire [XLEN-1:0] ALU_src1_wire;
    wire [XLEN-1:0] ALU_src2_wire;
@@ -173,6 +176,7 @@ module RISCV
 						   .rd_addr_i(instr_wire[11:7]),
 						   .IMM_V_i(IMM_V_wire),
 						   .PC_i(PC_wire),
+                                                   .branch_i(PC_sel_wire),
 						   .clk(clk),
 						   .rst_n(rst_n)
    );
@@ -187,9 +191,18 @@ module RISCV
 					 .clk(clk),
 					 .rst_n(rst_n)
    );
-   
-   assign ALU_src1_wire = (MUX_ALU_A_sel_D_wire == 1'd1) ? PC_D_wire : src1_data_wire;
-   assign ALU_src2_wire = (MUX_ALU_B_sel_D_wire == 1'd1) ? IMM_V_D_wire : src2_data_wire;
+      
+   FORWARD u_FORWARD(.src1_forward_sel(src1_forward_sel_wire),
+                     .src2_forward_sel(src2_forward_sel_wire),
+                     .src1_de(rs1_addr_D_wire),
+                     .src2_de(rs2_addr_D_wire),
+                     .rd_wb(rd_addr_D2_wire)
+   );
+
+   assign ALU_src1_wire = (MUX_ALU_A_sel_D_wire  == 1'd1) ? PC_D_wire    :
+                          (src1_forward_sel_wire == 1'd1) ? WB_DATA_wire : src1_data_wire;
+   assign ALU_src2_wire = (MUX_ALU_B_sel_D_wire  == 1'd1) ? IMM_V_D_wire :
+                          (src2_forward_sel_wire == 1'd1) ? WB_DATA_wire : src2_data_wire;
    
    ALU u_ALU(.src1(ALU_src1_wire),
              .src2(ALU_src2_wire),
@@ -225,6 +238,7 @@ module RISCV
                              .DM_WEN_i(DM_WEN_D_wire),
                              .WB_MUX_sel_i(WB_MUX_sel_D_wire),
                              .rd_addr_i(rd_addr_D_wire),
+                             .branch_i(branch_triggle),
                              .clk(clk),
                              .rst_n(rst_n)
    );
