@@ -1,0 +1,78 @@
+//----------------------------
+//  RISCV 32 I 
+//  opcode table
+//****************************
+//  funct7 [31:25] : 7-bit
+//  funct3 [14:12] : 3-bit
+//  opcode [ 6: 0] : 7-bit
+//----------------------------
+
+
+//R-type
+//funct7              funct3         opcode
+7'b000_0000(7'h00)  3'b000(3'h0)   7'b011_0011(7'h33) (ADD)    // ADD
+7'b010_0000(7'h20)  3'b000(3'h0)   7'b011_0011(7'h33) (SUB)
+7'b000_0000(7'h00)  3'b001(3'h1)   7'b011_0011(7'h33) (SLL)    // left shift 
+7'h000_0000(7'h00)  3'b010(3'h2)   7'b011_0011(7'h33) (SLT)    // rs1 < rs2
+7'h000_0000(7'h00)  3'b011(3'h3)   7'b011_0011(7'h33) (SLTU)   // rs1 < rs2 , result =1 (unsigned)
+7'h000_0000(7'h00)  3'b100(3'h4)   7'b011_0011(7'h33) (XOR)
+7'h000_0000(7'h00)  3'b101(3'h5)   7'b011_0011(7'h33) (SRL)    // right shift logic
+7'h010_0000(7'h20)  3'b101(3'h5)   7'b011_0011(7'h33) (SRA)    // right shift arithmetic
+7'h000_0000(7'h00)  3'b110(3'h6)   7'b011_0011(7'h33) (OR)
+7'h000_0000(7'h00)  3'b111(3'h7)   7'b011_0011(7'h33) (AND)
+ 
+//I-type 0 
+//don't care funct7
+// funct3          opcode
+3'b000 (3'h0)  7'b001_0011(7'h13) (ADDI)
+3'b010 (3'h2)  7'b001_0011(7'h13) (SLTI)
+3'b011 (3'h3)  7'b001_0011(7'h13) (SLTIU)
+3'b100 (3'h4)  7'b001_0011(7'h13) (XORI)
+3'b110 (3'h6)  7'b001_0011(7'h13) (ORI) 
+3'b111 (3'h7)  7'b001_0011(7'h13) (ANDI)
+//shift operation
+//funct7                 funct3               opcode
+7'b000_0000(7'h00)     3'b001(3'h1)       7'b001_0011(7'h13) (SLLI)
+7'b000_0000(7'h00)     3'b101(3'h5)       7'b001_0011(7'h13) (SRLI)
+7'b010_0000(7'h20)     3'b101(3'h5)       7'b001_0011(7'h13) (SRAI)
+
+
+//I-type 1 (LB,LH,LW,LBU,LHU)
+//don't care funct7
+// funct3          opcode
+3'b000 (3'h0)  7'b000_0011(7'h03) (LB) : load byte
+3'b001 (3'h1)  7'b000_0011(7'h03) (LH) : load half word
+3'b010 (3'h2)  7'b000_0011(7'h03) (LW) : load word
+3'b100 (3'h4)  7'b000_0011(7'h03) (LBU)
+3'b101 (3'h5)  7'b000_0011(7'h03) (LHU)
+
+//I-type 2 (JALR)
+//don't care  funct7
+//funct3 : 3'b000
+7'b110_0111(7'h67)   (JALR)
+
+//J-type opcode
+//don't care funct3 and funct7
+7'b110_1111(7'h6F)   (JAL)
+
+//S-type (SB,SH,SW)
+//don't care funct7
+// funct3          opcode
+3'b000(3'h0)   7'b010_0011(7'h23) (SB)
+3'b001(3'h1)   7'b010_0011(7'h23) (SH)
+3'b010(3'h2)   7'b010_0011(7'h23) (SW)
+
+//B-type
+//don't care funct7
+// funct3          opcode
+3'b000(3'h0)   7'b110_0011(7'h63)  (BEQ)
+3'b001(3'h1)   7'b110_0011(7'h63)  (BNE) 
+3'b100(3'h4)   7'b110_0011(7'h63)  (BLT)
+3'b101(3'h5)   7'b110_0011(7'h63)  (BGE)
+3'b110(3'h6)   7'b110_0011(7'h63)  (BGEU)
+
+//U-type 
+//don't care funct7 and funct3
+//opcode
+7'b011_0111(7'h37) (LUI)
+7'b001_0111(7'h17) (AUIPC)
