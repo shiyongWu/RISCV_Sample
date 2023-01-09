@@ -1,0 +1,39 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Dec 05 15:15:27 2022
+[*]
+[dumpfile] "D:\verilog\AHB\VCD\ahb_top_tb.vcd"
+[dumpfile_mtime] "Mon Dec 05 15:13:53 2022"
+[dumpfile_size] 20282
+[savefile] "D:\verilog\AHB\VCD\signal check.gtkw"
+[timestart] 494
+[size] 1920 1057
+[pos] -1 -1
+*-3.540092 535 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] ahb_top_tb.
+[treeopen] ahb_top_tb.U_AHB_TOP.
+[treeopen] ahb_top_tb.U_AHB_TOP.U_SLAVE_1.
+[sst_width] 197
+[signals_width] 158
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@28
+ahb_top_tb.U_AHB_TOP.U_AHB_ARBITER.H_clk
+ahb_top_tb.U_AHB_TOP.u_master_1.req
+ahb_top_tb.U_AHB_TOP.u_master_1.H_busreq
+ahb_top_tb.U_AHB_TOP.u_master_1.H_grant
+@22
+ahb_top_tb.U_AHB_TOP.u_master_1.H_addr[31:0]
+@200
+-Slave 1 wrap
+@28
+ahb_top_tb.U_AHB_TOP.U_SLAVE_1.state[1:0]
+ahb_top_tb.U_AHB_TOP.U_SLAVE_1.h_valid
+ahb_top_tb.U_AHB_TOP.U_SLAVE_1.write_tmp
+@22
+ahb_top_tb.U_AHB_TOP.U_SLAVE_1.addr_tmp[31:0]
+ahb_top_tb.U_AHB_TOP.U_SLAVE_1.H_wdata[31:0]
+@23
+ahb_top_tb.U_AHB_TOP.U_SLAVE_1.H_rdata[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
